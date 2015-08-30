@@ -1,0 +1,10 @@
+{
+  "AppSettings": {
+    "SiteTitle": "ElasticSearchSample"
+  },
+  "Data": {
+    "DefaultConnection": {
+      "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-ElasticSearchSample-c714c606-0478-4926-a68a-06ec349a7b5f;Trusted_Connection=True;MultipleActiveResultSets=true"
+    }
+  }
+}
