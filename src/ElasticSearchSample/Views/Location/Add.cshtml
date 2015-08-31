@@ -1,0 +1,14 @@
+﻿@model Location
+@{
+    ViewBag.Title = "Add location";
+}
+
+<div class="form-group form-horizontal" style="margin-top: 10px">
+    <form method="post" asp-controller="Location" asp-action="Add">
+        <div><label>Name:</label><input type="text" asp-for="Name" /><span asp-validation-for="Name">*</span></div>
+        <div><label>Longtitude:</label><input type="text" asp-for="GeoPoint.Lon"/></div>
+        <div><label>Latitude:</label><input type="text" asp-for="GeoPoint.Lat" /></div>
+
+        <input type="submit" value="Submit" />
+    </form>
+</div>
