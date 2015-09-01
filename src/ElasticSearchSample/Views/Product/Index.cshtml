@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Product";
+}
+
+<div style="margin-top:10px">
+    <span>Search:</span><input type="text" name="keyword" id="search"/>
+</div>
+<ul id="prompts">
+</ul>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('#search').keyup(function () {
+                var searchKeyword = $(this).val();
+                $.get("/product/searchprompts?keyword=" + searchKeyword, function (data) {
+                    $('#prompts').html("");
+                    console.log(data);
+                    var htmlStr = "";
+                    for (var i = 0; i < data.length; i++) {
+                        htmlStr += "<li>" + data[i].Name + "&nbsp;Count:" + data[i].ProductCount + "</li>";
+                    }
+                    $('#prompts').html(htmlStr);
+                });
+            });
+        });
+    </script>
+}
