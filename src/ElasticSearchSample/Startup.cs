@@ -84,7 +84,7 @@ namespace ElasticSearchSample
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Location}/{action=Index}/{id?}");
+                    template: "{controller=Product}/{action=Index}/{id?}");
 
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");

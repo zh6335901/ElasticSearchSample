@@ -1,26 +1,82 @@
 ﻿@{
     ViewBag.Title = "Product";
+    var sortFields = (string[])ViewBag.SortFields;
 }
-
-<div style="margin-top:10px">
-    <span>Search:</span><input type="text" name="keyword" id="search"/>
+<br />
+<div>
+    <form class="form-inline" method="post" asp-controller="Location" asp-action="Index">
+        <div class="form-group">
+            <input type="text" class="form-control" name="keyword" id="searchText" />
+        </div>
+        <div class="form-group">
+            <select id="sortFields" class="form-control">
+                <option value="">None</option>
+                @foreach (var sortField in sortFields)
+                {
+                    <option value="@sortField">@sortField</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <select id="sortDescending" class="form-control">
+                <option value="true">Descending</option>
+                <option value="false">Ascending</option>
+            </select>
+        </div>
+        <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
+    </form>
 </div>
 <ul id="prompts">
 </ul>
+<hr />
+<table id="products" class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Member Price</td>
+            <td>Market Price</td>
+            <td>Shop Name</td>
+            <td>Published Time</td>
+            <td>Score</td>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 @section scripts{
     <script type="text/javascript">
         $(function () {
-            $('#search').keyup(function () {
+            $('#searchText').keyup(function () {
                 var searchKeyword = $(this).val();
                 $.get("/product/searchprompts?keyword=" + searchKeyword, function (data) {
                     $('#prompts').html("");
-                    console.log(data);
                     var htmlStr = "";
                     for (var i = 0; i < data.length; i++) {
                         htmlStr += "<li>" + data[i].Name + "&nbsp;Count:" + data[i].ProductCount + "</li>";
                     }
                     $('#prompts').html(htmlStr);
+                });
+            });
+
+            $('#searchBtn').click(function () {
+                var keyword = $('#searchText').val();
+                var sortField = $("#sortFields option:selected").val() || "";
+                var sortDescending = $('#sortDescending option:selected').val() || true;
+                var url = '/product/searchproducts?keyword=' + keyword + "&sortfield=" + sortField + "&sortDescending=" + sortDescending;
+
+                $.get(url, function (data) {
+                    $('#products tbody').html("");
+                    var htmlStr = "";
+                    for (var i = 0; i < data.length; i++) {
+                        htmlStr += "<tr>"
+                                    + "<td>" + data[i].Name + "</td>"
+                                    + "<td>" + data[i].MemberPrice + "</td>"
+                                    + "<td>" + data[i].MarketPrice + "</td>"
+                                    + "<td>" + data[i].ShopName + "</td>"
+                                    + "<td>" + data[i].PublishedTime + "</td>"
+                                    + "<td>" + data[i].Score + "</td></tr>";
+                    }
+                    $('#products tbody').html(htmlStr);
                 });
             });
         });

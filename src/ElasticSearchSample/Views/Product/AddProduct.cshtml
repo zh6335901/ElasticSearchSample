@@ -1,0 +1,40 @@
+﻿@model Product
+@{
+    ViewBag.Title = "Add product";
+}
+
+<p>@TempData["Message"]</p>
+<br />
+<div>
+    <form method="post" asp-controller="Product" asp-action="AddProduct">
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" asp-for="Name" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label for="Picture">Picture</label>
+            <input type="text" asp-for="Picture" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="MemberPrice">MemberPrice</label>
+            <input type="text" asp-for="MemberPrice" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="MarketPrice">MarketPrice</label>
+            <input type="text" asp-for="MarketPrice" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="ShopName">ShopName</label>
+            <input type="text" asp-for="ShopName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="PublishedTime">PublishedTime</label>
+            <input type="text" asp-for="PublishedTime" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="Weight">Weight</label>
+            <input type="text" asp-for="Weight" class="form-control" />
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </form>
+</div>

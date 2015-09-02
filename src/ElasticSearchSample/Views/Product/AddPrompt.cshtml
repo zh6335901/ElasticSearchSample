@@ -1,0 +1,16 @@
+﻿@model ProductSearchPrompt
+@{
+    ViewBag.Title = "Add product search prompt";
+}
+
+<p>@TempData["Message"]</p>
+
+<div class="form-group form-horizontal" style="margin-top: 10px">
+    <form method="post" asp-controller="Product" asp-action="AddPrompt">
+        <div><label>Name:</label><input type="text" asp-for="Name" /><span asp-validation-for="Name">*</span></div>
+        <div><label>Product Count:</label><input type="text" asp-for="ProductCount" /></div>
+
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+

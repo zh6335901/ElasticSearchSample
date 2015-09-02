@@ -9,8 +9,6 @@ namespace ElasticSearchSample.Models
 {
     public class Location
     {
-        public string Id { get; set; }
-
         [Required]
         [ElasticProperty(Analyzer = "ik", SearchAnalyzer = "ik", AddSortField = true)]
         public string Name { get; set; }

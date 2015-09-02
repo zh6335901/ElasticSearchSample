@@ -3,22 +3,50 @@
     ViewBag.Title = "Location";
 }
 
-<div class="form-group form-horizontal" style="margin-top: 10px">
-    <form method="get" asp-controller="Location" asp-action="Index">
-        <div><label>Keyword:</label><input type="text" name="keyword" value="@ViewBag.SearchModel.Keyword"/></div>
-        <div><label>From longitude:</label><input type="text" name="longitude" value="@ViewBag.SearchModel.Longitude" /></div>
-        <div><label>From latitude:</label><input type="text" name="latitude" value="@ViewBag.SearchModel.Latitude" /></div>
-
-        <input type="submit" value="Search"/>
+<br />
+<div>
+    <form class="form-inline" method="post" asp-controller="Location" asp-action="Index">
+        <div class="form-group">
+            <label for="Keyword">Keyword</label>
+            <input type="text" class="form-control" name="keyword" value="@ViewBag.SearchModel.Keyword" />
+        </div>
+        <div class="form-group">
+            <label for="Longtitude">My Longtitude</label>
+            <input type="text" class="form-control" name="longitude" value="@ViewBag.SearchModel.Longitude" />
+        </div>
+        <div class="form-group">
+            <label for="Latitude">My Latitude</label>
+            <input type="text" class="form-control" name="latitude" value="@ViewBag.SearchModel.Latitude" />
+        </div>
+        <div style="margin-top: 10px;">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
     </form>
 </div>
 
-<ul>
-    @foreach (var location in Model)
-    {
-        <li>@($"Name: {location.Name.PadRight(20)}, Longtitude: {location.Longitude}, Latitude: {location.Latitude}, distance: {location.Distance}km")</li>
-    }
-</ul>
+<hr />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Longtitude</td>
+            <td>Latitude</td>
+            <td>Distance</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var location in Model)
+        {
+            <tr>
+                <td>@location.Name</td>
+                <td>@location.Longitude</td>
+                <td>@location.Latitude</td>
+                <td>@location.Distance</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 <div>
     <a asp-action="add">Add location</a>

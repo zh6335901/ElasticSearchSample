@@ -41,7 +41,8 @@ namespace ElasticSearchSample.Services
                 Name = h.Source.Name,
                 Distance = Convert.ToSingle(h.Sorts.First()),
                 Latitude = h.Source.GeoPoint.Lat,
-                Longitude = h.Source.GeoPoint.Lon
+                Longitude = h.Source.GeoPoint.Lon,
+                Id = h.Id
             });
         }
 

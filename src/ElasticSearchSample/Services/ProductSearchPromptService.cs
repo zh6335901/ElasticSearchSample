@@ -46,17 +46,21 @@ namespace ElasticSearchSample.Services
                 .Query(q => q
                     .Match(md => md
                         .OnField(prompt => prompt.Name)
-                        .Operator(Operator.Or)
+                        .Operator(Operator.And)
                         .Query(keyword)))
                 .Highlight(h => h
                     .OnFields(fs => fs
                         .OnField(prompt => prompt.Name)
                         .PreTags("<strong>")
                         .PostTags("</strong>")))
-                .Filter(f => f.Range(r => r.Greater(0)))
-                .Sort(sfd => sfd.UnmappedType(FieldType.Integer).Descending()));
+                .Filter(f => f.Range(r => r.OnField(prompt => prompt.ProductCount).Greater(0)))
+                .Sort(sfd => sfd.OnField(prompt => prompt.ProductCount).Descending()));
 
-            return response.Documents;
+            return response.Hits.Select(h => new ProductSearchPrompt
+            {
+                Name = h.Highlights["name"].Highlights.FirstOrDefault() ?? h.Source.Name,
+                ProductCount = h.Source.ProductCount
+            });
         }
     }
 }
