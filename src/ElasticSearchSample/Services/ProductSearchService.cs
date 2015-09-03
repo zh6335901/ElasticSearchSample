@@ -13,7 +13,7 @@ namespace ElasticSearchSample.Services
         public ProductSearchService(string indexName, string connectionUri = null) : base(indexName, connectionUri)
         { }
 
-        public async Task<IEnumerable<ProductSearchResult>> SearchProductsWithWeight(
+        public async Task<IEnumerable<ProductSearchResult>> SearchProductsWithWeightAsync(
             string keyword, 
             Dictionary<string, object> terms, 
             string sortField = "", 
@@ -28,33 +28,7 @@ namespace ElasticSearchSample.Services
                 return Enumerable.Empty<ProductSearchResult>();
             }
 
-            QueryContainer queryContainer = new MatchQuery()
-            {
-                Analyzer = "ik",
-                Operator = Operator.And,
-                Field = "name",
-                Query = keyword
-            };
-
-            if (terms != null)
-            {
-                foreach (var term in terms)
-                {
-                    QueryContainer termQuery = new TermQuery
-                    { 
-                        Field = term.Key,
-                        Value = term.Value
-                    };
-
-                    queryContainer = queryContainer && termQuery;
-                }
-            }
-
-            var queryDescriptor = new QueryDescriptor<Product>()
-                .FunctionScore(fsq => fsq
-                    .Query(q => queryContainer)
-                    .BoostMode(FunctionBoostMode.Replace)
-                    .ScriptScore(script => script.Script("_score + doc['weight']")));
+            QueryContainer queryDescriptor = GenerateSearchProductQuery(keyword, terms);
 
             var searchDescriptor = new SearchDescriptor<Product>()
                 .From(from)
@@ -88,6 +62,38 @@ namespace ElasticSearchSample.Services
                 Weight = h.Source.Weight,
                 PublishedTime = h.Source.PublishedTime
             });
+        }
+
+        private QueryContainer GenerateSearchProductQuery(string keyword, Dictionary<string, object> terms)
+        {
+            QueryContainer queryContainer = new MatchQuery()
+            {
+                Analyzer = "ik",
+                Operator = Operator.And,
+                Field = "name",
+                Query = keyword
+            };
+
+            if (terms != null)
+            {
+                foreach (var term in terms)
+                {
+                    QueryContainer termQuery = new TermQuery
+                    {
+                        Field = term.Key,
+                        Value = term.Value
+                    };
+
+                    queryContainer = queryContainer && termQuery;
+                }
+            }
+
+            var queryDescriptor = new QueryDescriptor<Product>()
+                .FunctionScore(fsq => fsq
+                    .Query(q => queryContainer)
+                    .BoostMode(FunctionBoostMode.Replace)
+                    .ScriptScore(script => script.Script("_score + doc['weight']")));
+            return queryDescriptor;
         }
 
         private void ConfigHighlightFieldDescriptor(HighlightFieldDescriptor<Product> descriptor, Expression<Func<Product, object>> expression)

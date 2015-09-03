@@ -31,7 +31,7 @@ namespace ElasticSearchSample.Services
                         .Type(NumberType.Integer))));
         }
 
-        public async Task<IEnumerable<ProductSearchPrompt>> GetProductSearchPrompts(string keyword, int size = 10)
+        public async Task<IEnumerable<ProductSearchPrompt>> GetProductSearchPromptsAsync(string keyword, int size = 10)
         {
             if (string.IsNullOrWhiteSpace(keyword) || size <= 0)
             {

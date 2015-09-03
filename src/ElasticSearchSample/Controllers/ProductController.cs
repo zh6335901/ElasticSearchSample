@@ -22,7 +22,7 @@ namespace ElasticSearchSample.Controllers
 
         public async Task<IActionResult> SearchProducts(ProductSearchRequest request)
         {
-            var products = await _productService.SearchProductsWithWeight(
+            var products = await _productService.SearchProductsWithWeightAsync(
                 request.Keyword, 
                 request.Terms, 
                 request.SortField, 
@@ -35,7 +35,7 @@ namespace ElasticSearchSample.Controllers
 
         public async Task<IActionResult> SearchPrompts(string keyword, int size = 10)
         {
-            var prompts = await _promptService.GetProductSearchPrompts(keyword, size);
+            var prompts = await _promptService.GetProductSearchPromptsAsync(keyword, size);
             return Json(prompts);
         }
 
