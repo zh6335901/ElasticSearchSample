@@ -48,15 +48,18 @@ namespace ElasticSearchSample.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPrompt(ProductSearchPrompt prompt)
         {
-            var response = await _promptService.IndexAsync(prompt);
+            if (ModelState.IsValid)
+            {
+                var response = await _promptService.IndexAsync(prompt);
 
-            if (response.ServerError == null)
-            {
-                TempData["Message"] = "success";
-            }
-            else
-            {
-                TempData["Message"] = "error:" + response.ServerError.Error;
+                if (response.ServerError == null)
+                {
+                    TempData["Message"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "error:" + response.ServerError.Error;
+                }
             }
 
             return View(prompt);
@@ -71,15 +74,18 @@ namespace ElasticSearchSample.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProduct(Product product)
         {
-            var response = await _productService.IndexAsync(product);
+            if (ModelState.IsValid)
+            {
+                var response = await _productService.IndexAsync(product);
 
-            if (response.ServerError == null)
-            {
-                TempData["Message"] = "success";
-            }
-            else
-            {
-                TempData["Message"] = "error:" + response.ServerError.Error;
+                if (response.ServerError == null)
+                {
+                    TempData["Message"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "error:" + response.ServerError.Error;
+                }
             }
 
             return View("AddProduct", product);

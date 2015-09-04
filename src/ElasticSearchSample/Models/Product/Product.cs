@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Nest;
@@ -8,6 +9,7 @@ namespace ElasticSearchSample.Models
 {
     public class Product
     {
+        [Required]
         [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik")]
         public string Name { get; set; }
 
@@ -20,6 +22,7 @@ namespace ElasticSearchSample.Models
         [ElasticProperty(Type = FieldType.Double, AddSortField = true)]
         public double MarketPrice { get; set; }
 
+        [Required]
         [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik")]
         public string ShopName { get; set; }
 
