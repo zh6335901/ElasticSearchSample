@@ -26,6 +26,7 @@
         <button type="button" id="searchBtn" class="btn btn-primary">Search</button>
     </form>
 </div>
+<p id="suggest" class="text-info"></p>
 <ul id="prompts">
 </ul>
 <hr />
@@ -67,16 +68,23 @@
                 $.get(url, function (data) {
                     $('#products tbody').html("");
                     var htmlStr = "";
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.Products.length; i++) {
                         htmlStr += "<tr>"
-                                    + "<td>" + data[i].Name + "</td>"
-                                    + "<td>" + data[i].MemberPrice + "</td>"
-                                    + "<td>" + data[i].MarketPrice + "</td>"
-                                    + "<td>" + data[i].ShopName + "</td>"
-                                    + "<td>" + data[i].PublishedTime + "</td>"
-                                    + "<td>" + data[i].Score + "</td></tr>";
+                                    + "<td>" + data.Products[i].Name + "</td>"
+                                    + "<td>" + data.Products[i].MemberPrice + "</td>"
+                                    + "<td>" + data.Products[i].MarketPrice + "</td>"
+                                    + "<td>" + data.Products[i].ShopName + "</td>"
+                                    + "<td>" + data.Products[i].PublishedTime + "</td>"
+                                    + "<td>" + data.Products[i].Score + "</td></tr>";
                     }
                     $('#products tbody').html(htmlStr);
+
+                    if (data.Suggest) {
+                        $('#suggest').show().html("你是不是想找:" + data.Suggest);
+                    }
+                    else {
+                        $('#suggest').hide();
+                    }
                 });
             });
         });

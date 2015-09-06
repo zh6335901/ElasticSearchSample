@@ -21,13 +21,12 @@ namespace ElasticSearchSample.Services
             int from = 0, 
             int size = 10)
         {
-            var client = GetClient();
-
             if (string.IsNullOrWhiteSpace(keyword))
             {
                 return Enumerable.Empty<ProductSearchResult>();
             }
 
+            var client = GetClient();
             QueryContainer queryDescriptor = GenerateSearchProductQuery(keyword, terms);
 
             var searchDescriptor = new SearchDescriptor<Product>()
@@ -55,24 +54,92 @@ namespace ElasticSearchSample.Services
                 Id = h.Id,
                 MarketPrice = h.Source.MarketPrice,
                 MemberPrice = h.Source.MemberPrice,
-                Name = h.Highlights["name"].Highlights.FirstOrDefault() ?? h.Source.Name,
+                Name = GetHightlightFieldValue(h, "Name") ?? h.Source.Name,
                 Picture = h.Source.Picture,
                 Score = h.Score,
-                ShopName = h.Source.ShopName,
+                ShopName = GetHightlightFieldValue(h, "ShopName") ?? h.Source.ShopName,
                 Weight = h.Source.Weight,
                 PublishedTime = h.Source.PublishedTime
             });
         }
 
+        public async Task<string> GetSearchSuggestionAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return string.Empty;
+            }
+
+            var client = GetClient();
+            var response = await client.SuggestAsync<Product>(sd => sd.Term("name_suggestion", 
+                tsd => tsd
+                    .Analyzer("ik_max_word")
+                    .Text(keyword)
+                    .MinWordLength(2)
+                    .Size(1)
+                    .OnField(p => p.Name)));
+
+            if (response.Suggestions.ContainsKey("name_suggestion"))
+            {
+                Suggest[] suggests = response.Suggestions["name_suggestion"];
+                string suggestionStr = keyword;
+                bool @fixed = false;
+                int currentPos = -1;
+
+                foreach (var suggest in suggests)
+                {
+                    var option = suggest.Options.FirstOrDefault();
+                    if (option != null && suggest.Offset >= currentPos)
+                    {
+                        var needReplaced = keyword.Substring(suggest.Offset, suggest.Length);
+                        if (needReplaced.ToLower() != option.Text.ToLower())
+                        {
+                            suggestionStr = suggestionStr.Replace(needReplaced, option.Text);
+
+                            @fixed = true;
+                            currentPos = suggest.Offset + suggest.Length;
+                        }
+                    }
+                }
+                if (@fixed)
+                {
+                    return suggestionStr;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private string GetHightlightFieldValue(IHit<Product> hit, string field)
+        {
+            field = field.Substring(0, 1).ToLower() + field.Substring(1);
+            if (hit.Highlights.ContainsKey(field))
+            {
+                return hit.Highlights[field].Highlights.FirstOrDefault();
+            }
+
+            return null;
+        }
+
         private QueryContainer GenerateSearchProductQuery(string keyword, Dictionary<string, object> terms)
         {
-            QueryContainer queryContainer = new MatchQuery()
+            QueryContainer nameQuery = new MatchQuery()
             {
-                Analyzer = "ik",
+                Analyzer = "ik_syno",
                 Operator = Operator.And,
                 Field = "name",
                 Query = keyword
             };
+
+            QueryContainer shopNameQuery = new MatchQuery()
+            {
+                Analyzer = "ik_syno",
+                Operator = Operator.And,
+                Field = "shopName",
+                Query = keyword
+            };
+
+            QueryContainer queryContainer = nameQuery || shopNameQuery;
 
             if (terms != null)
             {

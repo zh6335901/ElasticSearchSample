@@ -10,7 +10,7 @@ namespace ElasticSearchSample.Models
     public class Product
     {
         [Required]
-        [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik")]
+        [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik_syno")]
         public string Name { get; set; }
 
         [ElasticProperty(Store = false, Index = FieldIndexOption.NotAnalyzed)]
@@ -23,7 +23,7 @@ namespace ElasticSearchSample.Models
         public double MarketPrice { get; set; }
 
         [Required]
-        [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik")]
+        [ElasticProperty(Store = true, Analyzer = "ik", SearchAnalyzer = "ik_syno")]
         public string ShopName { get; set; }
 
         [ElasticProperty(Type = FieldType.Date, AddSortField = true)]

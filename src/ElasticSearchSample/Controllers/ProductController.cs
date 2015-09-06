@@ -30,7 +30,9 @@ namespace ElasticSearchSample.Controllers
                 request.From, 
                 request.Size);
 
-            return Json(products);
+            var suggest = await _productService.GetSearchSuggestionAsync(request.Keyword);
+
+            return Json(new { Products = products, Suggest = suggest });
         }
 
         public async Task<IActionResult> SearchPrompts(string keyword, int size = 10)
