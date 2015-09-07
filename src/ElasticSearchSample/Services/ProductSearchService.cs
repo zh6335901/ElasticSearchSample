@@ -73,7 +73,7 @@ namespace ElasticSearchSample.Services
             var client = GetClient();
             var response = await client.SuggestAsync<Product>(sd => sd.Term("name_suggestion", 
                 tsd => tsd
-                    .Analyzer("ik_max_word")
+                    .Analyzer("ik")
                     .Text(keyword)
                     .MinWordLength(2)
                     .Size(1)
@@ -123,20 +123,18 @@ namespace ElasticSearchSample.Services
 
         private QueryContainer GenerateSearchProductQuery(string keyword, Dictionary<string, object> terms)
         {
-            QueryContainer nameQuery = new MatchQuery()
+            QueryContainer nameQuery = new QueryStringQuery()
             {
+                Query = $"name:{keyword}",
                 Analyzer = "ik_syno",
-                Operator = Operator.And,
-                Field = "name",
-                Query = keyword
+                DefaultField = "name",
             };
 
-            QueryContainer shopNameQuery = new MatchQuery()
+            QueryContainer shopNameQuery = new QueryStringQuery()
             {
+                Query = $"shopName:{keyword}",
                 Analyzer = "ik_syno",
-                Operator = Operator.And,
-                Field = "shopName",
-                Query = keyword
+                DefaultField = "shopName",
             };
 
             QueryContainer queryContainer = nameQuery || shopNameQuery;
